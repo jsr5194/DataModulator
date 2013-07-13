@@ -118,8 +118,15 @@ def createSound(sound, frequency, length=.2, rate=44100):
 	chunk = numpy.concatenate(chunks) * 0.25
 	sound.write(chunk.astype(numpy.float32).tostring()) #adds the chunks to the sound variable in 32bit format
 	
-os.system('rm binary.txt')
-fileName = raw_input('Enter Filename: ')
+binFileCheck = os.system("ls | grep 'binary.txt'")
+if binFileCheck == 0:
+	print "Removing previous binary.txt file"
+	os.system('rm binary.txt')
+
+try: 
+	fileName = raw_input('Enter Filename To Convert: ')
+except:
+	print 'Invalid filename'
 #fileName = 'picture.png'
 #writes the binary output to a file and returns filename
 binaryFileName = convertToBinary(fileName) 
