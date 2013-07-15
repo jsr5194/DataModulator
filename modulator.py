@@ -8,7 +8,7 @@ import pyaudio
 
 def convertToBinary(preFileName): #exports to file
 	try:
-		postFileName = 'binary.txt'
+		postFileName = 'modBinary.txt'
 		preFileOpen = open(preFileName, 'rb')
 		postFileOpen = open(postFileName, 'w')
 		for data in [line.strip() for line in preFileOpen]:
@@ -17,16 +17,37 @@ def convertToBinary(preFileName): #exports to file
 			linebreak = '0000110100001010'
 			postFileOpen.write(binData+linebreak) #this number is to add in the line break
 	except:
-		print "you got an error. i'm not smart enough to know which one"
+		print "Error in convertToBinary function"
 	finally:
 		return postFileName
 		preFileOpen.close()
 		postFileOpen.close()
 
+
+
+#creates the nibble from the earlier created file and sends it into playSound
+def createNibble(binFileName):
+	try: 
+		openBinaryTxt = open(binFileName, 'r')
+		readBinaryTxt = ' '
+		nibbleArray = []
+		while readBinaryTxt != '':
+			readBinaryTxt = openBinaryTxt.read(1)
+			if len(nibbleArray) == 4:
+				nibble = ''.join(nibbleArray)
+				playSound(nibble)
+				del nibbleArray[:]
+				nibbleArray.append(readBinaryTxt)
+			else:
+				nibbleArray.append(readBinaryTxt)
+	except:
+		pass		
+		
+
+
 def playSound(nibble):
-	print nibble
+	print 'Current Nibble: ',nibble
 	frequency = 0;
-	print frequency
 	#key	
 	aLo = '0000'
 	bLo = '0001'
@@ -78,31 +99,18 @@ def playSound(nibble):
 	elif nibble == hHi:
 		frequency=3400
 
-	p = pyaudio.PyAudio()
-	sound = p.open(format=pyaudio.paFloat32, channels=1, rate=44100, output=1)
+	
 	createSound(sound, frequency)
-	sound.close()
-	p.terminate()
+	
 
+#method to actually play the sound: length = how long it plays, rate=sample rate of device
+def createSound(sound, frequency, length=0.2, rate=44100): 
+	chunk = createSineWave(frequency, length, rate)
+	print 'Chunk: ', chunk
+	print 'chunk size: ', len(chunk)
+	sound.write(chunk.astype(numpy.float32).tostring()) #adds the chunks to the sound variable in 32bit format
+	
 
-#creates the nibble from the earlier created file and sends it into playSound
-def createNibble(binFileName):
-	try: 
-		openBinaryTxt = open(binFileName, 'r')
-		readBinaryTxt = ' '
-		nibbleArray = []
-		while readBinaryTxt != '':
-			readBinaryTxt = openBinaryTxt.read(1)
-			if len(nibbleArray) == 4:
-				nibble = ''.join(nibbleArray)
-				playSound(nibble)
-				del nibbleArray[:]
-				nibbleArray.append(readBinaryTxt)
-			else:
-				nibbleArray.append(readBinaryTxt)
-	except:
-		pass		
-		
 
 #method to create the sine wave
 def createSineWave(frequency, length, rate):
@@ -111,24 +119,23 @@ def createSineWave(frequency, length, rate):
 	sineWave = numpy.sin(numpy.arange(length)*factor) #this uses numpy to create the sine wave
 	return sineWave 
 
-#method to actually play the sound: length = how long it plays, rate=sample rate of device
-def createSound(sound, frequency, length=.2, rate=44100): 
-	chunks = []
-	chunks.append(createSineWave(frequency, length, rate))
-	chunk = numpy.concatenate(chunks) * 0.25
-	sound.write(chunk.astype(numpy.float32).tostring()) #adds the chunks to the sound variable in 32bit format
-	
-binFileCheck = os.system("ls | grep 'binary.txt'")
-if binFileCheck == 0:
-	print "Removing previous binary.txt file"
-	os.system('rm binary.txt')
 
+
+
+p = pyaudio.PyAudio()
+sound = p.open(format=pyaudio.paFloat32, channels=1, rate=44100, output=1)
+binFileCheck = os.system("ls | grep 'modBinary.txt'")
+if binFileCheck == 0:
+	print "Do you want to delete previous binary.txt file"
+	raw_input("(Enter : Yes, CTRL-C : no) >")
+	print "Removing previous binary.txt file"
+	os.system("rm modBinary.txt")
+	
 try: 
 	fileName = raw_input('Enter Filename To Convert: ')
 except:
 	print 'Invalid filename'
-#fileName = 'picture.png'
-#writes the binary output to a file and returns filename
 binaryFileName = convertToBinary(fileName) 
-
 createNibble(binaryFileName)
+sound.close()
+p.terminate()

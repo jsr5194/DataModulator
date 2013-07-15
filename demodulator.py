@@ -19,7 +19,7 @@ stream = p.open(format = p.get_format_from_width(wf.getsampwidth()),
 
 #read the data from the stream
 data = wf.readframes(CHUNK)
-print wf.getparams()
+
 
 #play the stream
 while data != '':
