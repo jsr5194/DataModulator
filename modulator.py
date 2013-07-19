@@ -120,10 +120,12 @@ def createSineWave(frequency, length, rate):
 	return sineWave 
 
 
-
+CHANNELS = 1
+FORMAT = pyaudio.paFloat32
+RATE = 44100
 
 p = pyaudio.PyAudio()
-sound = p.open(format=pyaudio.paFloat32, channels=1, rate=44100, output=1)
+sound = p.open(format=FORMAT, channels=CHANNELS, rate=RATE, output=True)
 binFileCheck = os.system("ls | grep 'modBinary.txt'")
 if binFileCheck == 0:
 	print "Do you want to delete previous binary.txt file"
@@ -137,5 +139,10 @@ except:
 	print 'Invalid filename'
 binaryFileName = convertToBinary(fileName) 
 createNibble(binaryFileName)
+
+
 sound.close()
 p.terminate()
+
+
+
