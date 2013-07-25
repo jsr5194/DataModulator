@@ -1,9 +1,14 @@
 #Main Source: http://www.iamit.org/blog/2012/01/advanced-data-exfiltration/
 #Code Help: http://milkandtang.com/blog/2013/02/16/making-noise-in-python/
 import math
+import sys
 import numpy
 import os
 import pyaudio
+
+CHANNELS = 1
+FORMAT = pyaudio.paFloat32
+RATE = 44100
 
 
 def convertToBinary(preFileName): #exports to file
@@ -65,7 +70,45 @@ def playSound(nibble):
 	fHi = '1101'
 	gHi = '1110'
 	hHi = '1111'
-	
+
+	if nibble == aLo:
+		frequency=1300
+	elif nibble == bLo:
+		frequency=1400
+	elif nibble == cLo:
+		frequency=1500
+	elif nibble == dLo:
+		frequency=1600
+	elif nibble == eLo:
+		frequency=1700
+	elif nibble == fLo:
+		frequency=1800
+	elif nibble == gLo:
+		frequency=1900
+	elif nibble == hLo:
+		frequency=2000
+	elif nibble == aHi:
+		frequency=2100
+	elif nibble == bHi:
+		frequency=2200
+	elif nibble == cHi:
+		frequency=2300
+	elif nibble == dHi:
+		frequency=2400
+	elif nibble == eHi:
+		frequency=2500
+	elif nibble == fHi:
+		frequency=2600
+	elif nibble == gHi:
+		frequency=2700
+	elif nibble == hHi:
+		frequency=2800
+
+	createSound(sound, frequency)
+
+
+
+'''	 original sequence of frequencies
 	if nibble == aLo:
 		frequency=400
 	elif nibble == bLo:
@@ -98,16 +141,16 @@ def playSound(nibble):
 		frequency=3200
 	elif nibble == hHi:
 		frequency=3400
-
+'''
 	
-	createSound(sound, frequency)
+
 	
 
 #method to actually play the sound: length = how long it plays, rate=sample rate of device
-def createSound(sound, frequency, length=0.2, rate=44100): 
+def createSound(sound, frequency, length=0.2, rate=RATE): 
 	chunk = createSineWave(frequency, length, rate)
-	print 'Chunk: ', chunk
-	print 'chunk size: ', len(chunk)
+	#print 'Chunk: ', chunk
+	#print 'chunk size: ', len(chunk)
 	sound.write(chunk.astype(numpy.float32).tostring()) #adds the chunks to the sound variable in 32bit format
 	
 
@@ -120,23 +163,38 @@ def createSineWave(frequency, length, rate):
 	return sineWave 
 
 
-CHANNELS = 1
-FORMAT = pyaudio.paFloat32
-RATE = 44100
+
+os.system("clear")
+if len(sys.argv) != 2:
+	print 
+	print "********************************************************"
+	print "* Incomplete command.  See examples below for usage:   *"
+	print "*                                                      *"           
+	print "*                   Standard Use                       *"
+	print "*                                                      *"
+	print "* From a text file:                                    *"
+	print "* python modulator.py filename.txt                     *"
+	print "********************************************************"  
+	print 
+	raw_input("Hit Enter To Return")
+	quit()
 
 p = pyaudio.PyAudio()
+os.system('clear')
 sound = p.open(format=FORMAT, channels=CHANNELS, rate=RATE, output=True)
 binFileCheck = os.system("ls | grep 'modBinary.txt'")
 if binFileCheck == 0:
 	print "Do you want to delete previous binary.txt file"
-	raw_input("(Enter : Yes, CTRL-C : no) >")
-	print "Removing previous binary.txt file"
-	os.system("rm modBinary.txt")
-	
-try: 
-	fileName = raw_input('Enter Filename To Convert: ')
-except:
-	print 'Invalid filename'
+	answer = raw_input("(Enter : Yes, CTRL-C : no) >")
+	if answer == 'Yes' or answer == 'yes':
+		os.system('clear')
+		print "Successfully removed previous modBinary.txt file. Starting Modulation"
+		os.system("rm modBinary.txt")
+	else:
+		print 'Exiting...'
+		quit()
+	 
+fileName = sys.argv[1]
 binaryFileName = convertToBinary(fileName) 
 createNibble(binaryFileName)
 

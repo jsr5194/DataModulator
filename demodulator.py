@@ -13,12 +13,21 @@ linebreakArray = []
 
 def startup():
 	if len(sys.argv) != 2:
+		os.system("clear")
 		print 
-		print "******************************************************"
-		print "* Incomplete command.  See examples below for usage: *"
-		print "*   Standard Use:   python demodulator.py filename   *"
-		print "******************************************************"  
+		print "********************************************************"
+		print "* Incomplete command.  See examples below for usage:   *"
+		print "*                                                      *"           
+		print "*                   Standard Use                       *"
+		print "*                                                      *"
+		print "* From a pre-recorded file:                            *"
+		print "* python demodulator.py filename.wav                   *"
+		print "*                                                      *"
+		print "* From raw recording:                                  *"
+		print "* python demodulator.py --record                       *"
+		print "********************************************************"  
 		print 
+		raw_input("Hit Enter To Return")
 		quit()
 
 	binFileCheck = os.system("ls | grep 'demodBinary.txt'")
@@ -31,9 +40,11 @@ def startup():
 		else:
 			quit()
 
+	if sys.argv[1] == '--record':
 
-	wavFile = sys.argv[1]
-	getFrequency(wavFile)
+	else:
+		wavFile = sys.argv[1]
+		getFrequency(wavFile)
 
 
 def getFrequency(filename):
@@ -109,6 +120,41 @@ def getNibble(frequency):
 	gHi = '1110'
 	hHi = '1111'
 
+
+	if nibble == aLo:
+		frequency=1600
+	elif nibble == bLo:
+		frequency=1700
+	elif nibble == cLo:
+		frequency=1800
+	elif nibble == dLo:
+		frequency=1900
+	elif nibble == eLo:
+		frequency=2000
+	elif nibble == fLo:
+		frequency=2100
+	elif nibble == gLo:
+		frequency=2200
+	elif nibble == hLo:
+		frequency=2300
+	elif nibble == aHi:
+		frequency=2400
+	elif nibble == bHi:
+		frequency=2500
+	elif nibble == cHi:
+		frequency=2600
+	elif nibble == dHi:
+		frequency=2700
+	elif nibble == eHi:
+		frequency=2800
+	elif nibble == fHi:
+		frequency=3000
+	elif nibble == gHi:
+		frequency=3200
+	elif nibble == hHi:
+		frequency=3400
+
+'''
 	if frequency==400.000000:
 		nibble = aLo
 	elif frequency==600.000000:
@@ -141,7 +187,7 @@ def getNibble(frequency):
 		nibble = gHi
 	elif frequency==3400.000000:
 		nibble = hHi
-
+'''
 	writeToFile(nibble)
 
 def writeToFile(nibble):
