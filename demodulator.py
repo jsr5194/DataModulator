@@ -13,38 +13,27 @@ linebreakArray = []
 
 def startup():
 	if len(sys.argv) != 2:
-		os.system("clear")
-		print 
-		print "********************************************************"
-		print "* Incomplete command.  See examples below for usage:   *"
-		print "*                                                      *"           
-		print "*                   Standard Use                       *"
-		print "*                                                      *"
-		print "* From a pre-recorded file:                            *"
-		print "* python demodulator.py filename.wav                   *"
-		print "*                                                      *"
-		print "* From raw recording:                                  *"
-		print "* python demodulator.py --record                       *"
-		print "********************************************************"  
-		print 
-		raw_input("Hit Enter To Return")
-		quit()
+		incompleteCommand();
 
-	binFileCheck = os.system("ls | grep 'demodBinary.txt'")
+	os.system("rm demodBinary.txt")
+	binFileCheck = os.system("ls | grep 'output.txt'")
 	if binFileCheck == 0:
-		print "Do you want to delete previous demodBinary.txt file"
+		print "Do you want to delete previous output.txt file"
 		answer = raw_input("(Enter : Yes, CTRL-C : no) >")
 		if answer == 'Yes' or answer == 'yes':
-			print "Removing previous demodBinary.txt file"
-			os.system("rm demodBinary.txt")
+			print "Removing previous output.txt file"
+			os.system("rm output.txt")
 		else:
 			quit()
 
 	if sys.argv[1] == '--record':
-
+		print 'you still need to do this one'
+		quit()
 	else:
 		wavFile = sys.argv[1]
 		getFrequency(wavFile)
+
+	
 
 
 def getFrequency(filename):
@@ -59,6 +48,8 @@ def getFrequency(filename):
 	# open stream
 	p = pyaudio.PyAudio()
 	os.system("clear");
+	#print Alert message
+	print "Your message will display shortly... \n \n"
 	stream = p.open(format =
 	                p.get_format_from_width(wf.getsampwidth()),
 	                channels = wf.getnchannels(),
@@ -121,74 +112,41 @@ def getNibble(frequency):
 	hHi = '1111'
 
 
-	if nibble == aLo:
-		frequency=1600
-	elif nibble == bLo:
-		frequency=1700
-	elif nibble == cLo:
-		frequency=1800
-	elif nibble == dLo:
-		frequency=1900
-	elif nibble == eLo:
-		frequency=2000
-	elif nibble == fLo:
-		frequency=2100
-	elif nibble == gLo:
-		frequency=2200
-	elif nibble == hLo:
-		frequency=2300
-	elif nibble == aHi:
-		frequency=2400
-	elif nibble == bHi:
-		frequency=2500
-	elif nibble == cHi:
-		frequency=2600
-	elif nibble == dHi:
-		frequency=2700
-	elif nibble == eHi:
-		frequency=2800
-	elif nibble == fHi:
-		frequency=3000
-	elif nibble == gHi:
-		frequency=3200
-	elif nibble == hHi:
-		frequency=3400
-
-'''
-	if frequency==400.000000:
+	if frequency >= 1290.000000 and frequency <= 1310.000000:
 		nibble = aLo
-	elif frequency==600.000000:
+	elif frequency >= 1390.000000 and frequency <= 1410.000000:
 		nibble = bLo
-	elif frequency==800.000000:
+	elif frequency >= 1490.000000 and frequency <= 1510.000000:
 		nibble = cLo
-	elif frequency==1000.000000:
+	elif frequency >= 1590.000000 and frequency <= 1610.000000:
 		nibble = dLo
-	elif frequency==1200.000000:
+	elif frequency >= 1690.000000 and frequency <= 1710.000000:
 		nibble = eLo
-	elif frequency==1400.000000:
+	elif frequency >= 1790.000000 and frequency <= 1810.000000:
 		nibble = fLo
-	elif frequency==1600.000000:
+	elif frequency >= 1890.000000 and frequency <= 1910.000000:
 		nibble = gLo
-	elif frequency==1800.000000:
+	elif frequency >= 1990.000000 and frequency <= 2010.000000:
 		nibble = hLo
-	elif frequency==2000.000000:
+	elif frequency >= 2090.000000 and frequency <= 2110.000000:
 		nibble = aHi
-	elif frequency==2200.000000:
+	elif frequency >= 2190.000000 and frequency <= 2210.000000:
 		nibble = bHi
-	elif frequency==2400.000000:
+	elif frequency >= 2290.000000 and frequency <= 2310.000000:
 		nibble = cHi
-	elif frequency==2600.000000:
+	elif frequency >= 2390.000000 and frequency <= 2410.000000:
 		nibble = dHi
-	elif frequency==2800.000000:
+	elif frequency >= 2490.000000 and frequency <= 2510.000000:
 		nibble = eHi
-	elif frequency==3000.000000:
+	elif frequency >= 2590.000000 and frequency <= 2610.000000:
 		nibble = fHi
-	elif frequency==3200.000000:
+	elif frequency >= 2690.000000 and frequency <= 2710.000000:
 		nibble = gHi
-	elif frequency==3400.000000:
+	elif frequency >= 2790.000000 and frequency <= 2810.000000:
 		nibble = hHi
-'''
+
 	writeToFile(nibble)
+
 
 def writeToFile(nibble):
 	try:
@@ -196,12 +154,10 @@ def writeToFile(nibble):
 		postFileOpen = open(postFile, 'a')
 		postFileOpen.write(nibble)
 		buffer(nibble)
-	except:
+	except Exception as e:
 		pass
 	finally:
 		postFileOpen.close()
-
-
 
 
 def buffer(nibble):
@@ -218,16 +174,42 @@ def buffer(nibble):
 		del bufferArray[:]
 
 	
-
-
 def printLetter(charArray):
 	letterArray = ''.join(charArray)
 	letter = binascii.unhexlify('%x'%int('0b'+letterArray,2))
 	sys.stdout.write(letter)
-	#print letter
+	#print letter,
+	try:
+		outputFile = 'output.txt'
+		outputFileOpen = open(outputFile, 'a')
+		outputFileOpen.write(letter)
+	except Exception as e:
+		print e
+	finally:
+		outputFileOpen.close()
+def incompleteCommand():
+	os.system("clear")
+	print 
+	print "********************************************************"
+	print "* Incomplete command.  See examples below for usage:   *"
+	print "*                                                      *"           
+	print "*                   Standard Use                       *"
+	print "*                                                      *"
+	print "* From a pre-recorded file:                            *"
+	print "* python demodulator.py filename.wav                   *"
+	print "*                                                      *"
+	print "* From raw recording:                                  *"
+	print "* python demodulator.py --record                       *"
+	print "********************************************************"  
+	print 
+	raw_input("Hit Enter To Return")
+	quit()
 
 
 
 
-
-startup()
+try:
+	startup()
+except KeyboardInterrupt:
+	print 'Exiting...'
+	quit()
