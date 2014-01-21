@@ -5,7 +5,7 @@ jsr5194
 
 Special thanks to j105rob, jtpecsi, and DylSec for all their help
 
-Prinamry resource: http://www.iamit.org/blog/2012/01/advanced-data-exfiltration/
+Prinamry resource: Iftach Ian Amit at http://www.iamit.org/blog/2012/01/advanced-data-exfiltration/
 
 
 This repository is for a project for a program that will modulate data from a 
